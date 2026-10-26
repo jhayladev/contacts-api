@@ -15,13 +15,12 @@ return new class extends Migration
             $table->string('phone_number', 255);
             $table->string('address', 255);
             $table->string('email', 255);
-            $table->foreignId('created_by')->constrained('contacts');
-            $table->foreignId('updated_by')->constrained('contacts');
-            $table->foreignId('deleted_by')->nullable()->constrained('contacts');
-            $table->string('url_avatar', 255);
-            $table->timestamps();
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
 
-            $table->unique(['user_id']);
+            $table->string('url_avatar', 255)->nullable();
+            $table->timestamps();
         });
     }
 
