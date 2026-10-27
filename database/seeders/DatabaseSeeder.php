@@ -2,8 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Project;
-use App\Models\Task;
+use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -11,27 +10,18 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+
         $admin = User::factory()->create([
-            'name' => 'Administrador TaskFlow',
-            'email' => 'admin@taskflow.test',
+            'name' => 'Administrador',
+            'email' => 'admin@contacts.test',
         ]);
 
-        $collaborators = User::factory(8)->create();
+        $collaborators = User::factory(5)->create();
 
-        Project::factory(4)
-            ->for($admin, 'creator')
-            ->create()
-            ->each(function (Project $project) use ($admin, $collaborators) {
-                $participants = $collaborators->random(3);
-                $project->participants()->attach($participants);
-
-                foreach ($participants as $participant) {
-                    Task::factory(2)
-                        ->for($project)
-                        ->for($participant, 'assignee')
-                        ->for($admin, 'creator')
-                        ->create();
-                }
-            });
+        $collaborators->push($admin)->each(function (User $user) {
+            Contact::factory(5)
+                ->for($user)
+                ->create();
+        });
     }
 }
