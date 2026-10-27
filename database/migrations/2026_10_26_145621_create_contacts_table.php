@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('deleted_by')->nullable()->constrained('users');
 
             $table->string('url_avatar', 255)->nullable();
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }
