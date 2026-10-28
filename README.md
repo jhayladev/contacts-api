@@ -39,6 +39,19 @@ composer require laravel/boost --dev
 php artisan boost:install
 ```
 
+## Modelo de datos
+
+Diagrama entidad-relación: [docs/er.md](docs/er.md)
+
+## Datos de prueba
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Crea un administrador (admin@taskflow.test / password), 8 colaboradores,
+4 proyectos y 24 tareas. Solo para desarrollo local.
+
 Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
 
 ## Contributing
