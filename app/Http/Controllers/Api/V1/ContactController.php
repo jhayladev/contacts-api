@@ -17,7 +17,14 @@ class ContactController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $contacts = $request->user()->contacts()->latest()->paginate(15);
+        
+        return ContactResource::collection($contacts);
+    }
 
+    public function contacts(Request $request): AnonymousResourceCollection
+    {
+        $contacts = $request->user()->contacts()->latest()->get();
+        
         return ContactResource::collection($contacts);
     }
 
@@ -53,13 +60,15 @@ class ContactController extends Controller
         return new ContactResource($contact);
     }
 
-    public function destroy(Request $request, Contact $contact): Response
+    public function destroy(Request $request, Contact $contact): \Illuminate\Http\JsonResponse
     {
         Gate::authorize('delete', $contact);
 
         $contact->update(['deleted_by' => $request->user()->id]);
         $contact->delete();
 
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Contacto eliminado exitosamente.'
+        ], 200);
     }
 }

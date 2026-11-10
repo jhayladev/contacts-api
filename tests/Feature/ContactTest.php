@@ -101,7 +101,11 @@ it('borra con soft delete y guarda deleted_by', function () {
     $user = autenticado();
     $contact = Contact::factory()->create(['user_id' => $user->id]);
 
-    $this->deleteJson("/api/v1/contacts/{$contact->id}")->assertNoContent();
+    $this->deleteJson("/api/v1/contacts/{$contact->id}")
+        ->assertOk()
+        ->assertJson([
+            'message' => 'Contacto eliminado exitosamente.'
+        ]);
 
     $this->assertSoftDeleted('contacts', ['id' => $contact->id]);
     $this->assertDatabaseHas('contacts', [
@@ -115,4 +119,15 @@ it('no deja borrar el contacto de otro usuario', function () {
     $ajeno = Contact::factory()->create();
 
     $this->deleteJson("/api/v1/contacts/{$ajeno->id}")->assertForbidden();
+});
+
+it('un usuario puede crear un contacto solo con el nombre', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->postJson('/api/v1/contacts', [
+        'name' => 'Contacto de Prueba',
+    ]);
+
+    $response->assertStatus(201)
+             ->assertJsonFragment(['name' => 'Contacto de Prueba']);
 });

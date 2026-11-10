@@ -9,23 +9,26 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('contacts', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('name', 255);
-            $table->string('email', 255)->unique();
-            $table->text('address');
-            $table->string('phone_number', 255);
-            $table->string('url_avatar', 255);
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->softDeletes();
-        });
-    }
+        public function up(): void
+        {
+            Schema::create('contacts', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+                $table->string('name');
+                $table->string('email')->nullable();
+                $table->string('phone_number')->nullable();
+                $table->text('address')->nullable();
+                $table->string('url_avatar')->nullable();
+                
+                // Añade estas columnas de auditoría que los tests están buscando:
+                $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
 
     /**
      * Reverse the migrations.

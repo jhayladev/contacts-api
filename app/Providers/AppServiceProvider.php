@@ -33,4 +33,4 @@ class AppServiceProvider extends ServiceProvider
                 $openApi->secure(SecurityScheme::http('bearer'));
             });
     }
-}
+}   

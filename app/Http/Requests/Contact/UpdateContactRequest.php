@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Contact;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateContactRequest extends FormRequest
 {
@@ -14,11 +15,18 @@ class UpdateContactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'email' => ['sometimes', 'nullable', 'email', 'max:255'],
-            'phone_number' => ['sometimes', 'nullable', 'string', 'max:30'],
-            'address' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'url_avatar' => ['sometimes', 'nullable', 'url', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'nullable',
+                'email',
+                'max:255',
+                Rule::unique('contacts', 'email')->where(function ($query) {
+                    return $query->where('user_id', $this->user()->id)->whereNull('deleted_at');
+                }),
+            ],
+            'phone_number' => ['nullable', 'string', 'max:50'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'url_avatar' => ['nullable', 'url', 'max:255'],
         ];
     }
 
